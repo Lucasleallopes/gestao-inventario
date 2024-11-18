@@ -1,92 +1,127 @@
 /* Estilos gerais */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  body, html {
-    height: 100%;
-    display:contents;
-  }
-  /* Container principal */
-  .home-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-  }
-  /* Caixa de conteúdo */
-  .content-box {
-    background-color: #ffffff;
-    padding: 40px;
-    border-radius: 12px;
-    max-width: 700px;
-    animation: fadeIn 1s ease-out;
-  }
-  /* Seção de texto */
-  .text-section h1 {
-    font-size: 2em;
-    margin-bottom: 10px;
-    color: #007bff;
-  }
-  .text-section p {
-    font-size: 1.2em;
-    margin: 10px 0;
-    color: #666;
-  }
-  /* Seção de imagem */
-  .image-section {
-    margin-top: 20px;
-  }
-  .inventory-image {
-    border-radius: 8px;
-    animation: bounce 1.5s infinite;
-  }
-  /* Seção de recursos */
-  .features-section {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 30px;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-  .feature {
-    background: #f0f4f8;
-    border-radius: 8px;
-    padding: 20px;
-    width: 200px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-  }
-  .feature-icon {
-    font-size: 2em;
-  }
-  .feature h3 {
-    margin-top: 10px;
-    color: #007bff;
-  }
-  .feature p {
-    font-size: 0.9em;
-    color: #555;
-  }
-  /* Rodapé */
-  .footer {
-    margin-top: 30px;
-    font-size: 0.8em;
-    color: #666;
-  }
-  .footer p {
-    margin: 24px 0;
-  }
-  /* Animações */
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  @keyframes bounce {
-    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-    40% { transform: translateY(-10px); }
-    60% { transform: translateY(-5px); }
-    
-  }
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body, html {
+  height: 100%;
+  display: contents;
+}
+
+/* Container principal */
+.home-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+/* Caixa de conteúdo */
+.content-box {
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 12px;
+  max-width: 700px;
+  animation: fadeIn 1s ease-out;
+}
+
+/* Seção de texto */
+.text-section h1 {
+  font-size: 2em;
+  margin-bottom: 10px;
+  color: #007bff;
+}
+
+.text-section p {
+  font-size: 1.2em;
+  margin: 10px 0;
+  color: #666;
+}
+
+.text-section .filters {
+  margin-top: 20px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+}
+
+.text-section label {
+  font-size: 1.2em;
+  color: #333;
+}
+
+.text-section input,
+.text-section select {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 1em;
+  width: auto;
+  box-sizing: border-box;
+  background-color: #f9f9f9;
+  transition: border 0.3s;
+}
+
+.text-section input[type="date"] {
+  padding-right: 24px;
+}
+
+.text-section input:focus,
+.text-section select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.text-section .filters .button-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Estilo do ícone do calendário no input de data */
+.text-section input[type="date"]::-webkit-calendar-picker-indicator {
+  background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"%3E%3Cpath fill="%23007bff" d="M10 2h4v2h-4zm6 0h2v2h-2zm4 0h2v16h-2zm-14 0h2v2h-2zm12 6h2v12h-2zm-12 0h2v12h-2z"/%3E%3C/svg%3E') no-repeat center right;
+  background-size: 16px 16px;
+}
+
+/* Estilo para o botão PDF */
+.button-wrapper {
+  margin-top: 20px;
+  text-align: center;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Tabela */
+.table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+.table th, .table td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

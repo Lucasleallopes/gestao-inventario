@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import api from "@/utils/api"; // Instância do Axios configurada
+import api from "@/utils/api";
 
 interface Pedido {
   id: number;

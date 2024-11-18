@@ -17,8 +17,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import api from "@/utils/api";  // Use a instância Axios configurada
-import { useAuth } from '@/context/AuthContext';
 
 interface Produto {
   id: number;
@@ -31,6 +29,11 @@ interface Produto {
   fornecedorNome?: string;
 }
 
+interface Fornecedor {
+  FornecedorID: number;
+  Nome: string;
+}
+
 function ListOfResult() {
   const [result, setResult] = useState<Produto[]>([]);
   const [fornecedores, setFornecedores] = useState<Record<number, string>>({});
@@ -41,10 +44,9 @@ function ListOfResult() {
   const [filtroFornecedor, setFiltroFornecedor] = useState<string>("");
   const [ordemPreco, setOrdemPreco] = useState<string>("");
 
-  const { user } = useAuth();
-
+  // Fetch produtos com filtro
   const fetchProdutos = () => {
-    let query = `/produtos?`;
+    let query = `http://localhost:3000/produtos?`;
 
     if (filtroNome) {
       query += `nome=${encodeURIComponent(filtroNome)}&`;
@@ -56,10 +58,10 @@ function ListOfResult() {
       query += `ordemPreco=${encodeURIComponent(ordemPreco)}&`;
     }
 
-    api.get(query)
-      .then((res) => setResult(res.data))
-      .catch((err) => setError(`Erro ao carregar produtos: ${err.message}`))
-      .finally(() => setLoading(false));
+    fetch(query)
+      .then((res) => res.json())
+      .then((data: Produto[]) => setResult(data))
+      .catch((err) => setError(`Erro ao carregar produtos: ${err.message}`));
   };
 
   useEffect(() => {
@@ -67,9 +69,11 @@ function ListOfResult() {
   }, [filtroNome, filtroFornecedor, ordemPreco]);
 
   useEffect(() => {
-    api.get("/fornecedores")
-      .then((res) => {
-        const fornecedorMap = res.data.reduce((map: { [x: string]: any; }, fornecedor: { FornecedorID: string | number; Nome: any; }) => {
+    // Fetch fornecedores
+    fetch("http://localhost:3000/fornecedores")
+      .then((res) => res.json())
+      .then((data: Fornecedor[]) => {
+        const fornecedorMap = data.reduce((map, fornecedor) => {
           map[fornecedor.FornecedorID] = fornecedor.Nome;
           return map;
         }, {} as Record<number, string>);
@@ -81,7 +85,10 @@ function ListOfResult() {
 
   const handleDelete = (id: number) => {
     if (confirm("Tem certeza que deseja excluir este produto?")) {
-      api.delete(`/produtos/${id}`)
+      fetch(`http://localhost:3000/produtos/${id}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      })
         .then(() => {
           setResult(result.filter((item) => item.id !== id));
         })
@@ -93,47 +100,38 @@ function ListOfResult() {
   if (error) return <p>{error}</p>;
 
   return (
-    <div className="p-4">
-      {/* Filtros responsivos */}
-      <div className="flex flex-col lg:flex-row lg:space-x-4 space-y-2 lg:space-y-0 mb-4">
+    <div className="p-4 overflow-x-auto">
+      <div className="flex space-x-4 mb-4">
         <Input
           placeholder="Filtrar por nome"
           value={filtroNome}
           onChange={(e) => setFiltroNome(e.target.value)}
-          className="lg:w-1/3 w-full"
         />
-        
-        <div className="lg:w-1/3 w-full">
-          <Select onValueChange={setFiltroFornecedor} value={filtroFornecedor}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Filtrar por fornecedor" />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.entries(fornecedores).map(([id, nome]) => (
-                <SelectItem key={id} value={id}>
-                  {nome}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="lg:w-1/3 w-full">
-          <Select onValueChange={setOrdemPreco} value={ordemPreco}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Ordenar por preço" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="asc">Preço Crescente</SelectItem>
-              <SelectItem value="desc">Preço Decrescente</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        <Select onValueChange={setFiltroFornecedor} value={filtroFornecedor}>
+          <SelectTrigger>
+            <SelectValue placeholder="Filtrar por fornecedor" />
+          </SelectTrigger>
+          <SelectContent>
+            {Object.entries(fornecedores).map(([id, nome]) => (
+              <SelectItem key={id} value={id}>
+                {nome}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select onValueChange={setOrdemPreco} value={ordemPreco}>
+          <SelectTrigger>
+            <SelectValue placeholder="Ordenar por preço" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="asc">Preço Crescente</SelectItem>
+            <SelectItem value="desc">Preço Decrescente</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
-      {/* Tabela responsiva */}
-      <div className="overflow-x-auto">
-        <Table className="min-w-full">
+      {result.length > 0 ? (
+        <Table className="w-full">
           <TableHeader>
             <TableRow>
               <TableHead>Imagem</TableHead>
@@ -159,37 +157,31 @@ function ListOfResult() {
                 </TableCell>
                 <TableCell>{item.nome}</TableCell>
                 <TableCell>{item.descricao}</TableCell>
-                <TableCell>R$ {item.preco.toFixed(2).replace(".", ",")}</TableCell>
+                <TableCell>{item.preco}</TableCell>
                 <TableCell>{item.quantidade}</TableCell>
                 <TableCell>{fornecedores[item.fornecedorId]}</TableCell>
                 <TableCell>
-                  {user && user.role === 'admin' && (
-                    <div className="flex space-x-2">
-                      <Link to={`/modify/${item.id}`}>
-                        <Button variant="default" size="sm">
-                          Modificar
-                        </Button>
-                      </Link>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleDelete(item.id)}
-                      >
-                        Excluir
+                  <div className="flex space-x-2">
+                    <Link to={`/modify/${item.id}`}>
+                      <Button variant="default" size="sm">
+                        Modificar
                       </Button>
-                    </div>
-                  )}
+                    </Link>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleDelete(item.id)}
+                    >
+                      Excluir
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
-      </div>
-
-      {result.length === 0 && (
-        <div className="flex flex-col items-center justify-center mt-4">
-          <p className="text-lg font-semibold">Nenhum produto encontrado.</p>
-        </div>
+      ) : (
+        <p>Nenhum produto encontrado.</p>
       )}
     </div>
   );
