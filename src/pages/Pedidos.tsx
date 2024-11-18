@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import ListPedidos from "../components/ListPedidos";
 import { Button } from "@/components/ui/button";
 import { useAuth } from '@/context/AuthContext'; // Importando o contexto de autenticação
-
+import RelatorioVendas from "../components/RelatorioVendas";
 const Pedidos = () => {
   const { user } = useAuth(); // Obtendo o usuário autenticado
 
@@ -19,7 +19,7 @@ const Pedidos = () => {
           
         </div>
       )}
-
+      <RelatorioVendas />
       <ListPedidos />
     </div>
   );
