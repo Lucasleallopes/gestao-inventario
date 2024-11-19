@@ -39,7 +39,7 @@ Para iniciar o backend, siga os passos abaixo:
 
  1. Navegue até a pasta do backend e faça os seguintes comandos:
    ```bash
-cd inventoryapp/db
+cd db
    ```
   ```bash
 npm init -y
