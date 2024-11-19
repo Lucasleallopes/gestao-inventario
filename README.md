@@ -51,7 +51,7 @@ npm i nodemon -D
 npm i sqlite3
   ```
  ```bash
-npm install multer express bcryptjs jsonwebtoken cors
+npm install multer express bcryptjs jsonwebtoken cors jspdf jspdf-autotable
  ```
 2. Para iniciar o servidor, use o comando:
   ```bash
